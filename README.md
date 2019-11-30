@@ -22,4 +22,4 @@ Includes:
     
     -Thanks to Team 1712 for their excellent whitepaper and 254's presentation on motion control
     
-To use as jitpack dependency, go to https://jitpack.io/#derekgeng15/RaiderLib/0.1.1
+To use as jitpack dependency, go to https://jitpack.io/#derekgeng15/RaiderLib/0.1.3
