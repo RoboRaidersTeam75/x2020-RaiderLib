@@ -14,6 +14,7 @@ import raiderlib.path.TrajPoint;
 public class PurePursuitController {
     DriveCharacterization driveCharacterization;
     double lookAheadDistance;
+    boolean isFinished;
     /**
      * Constructor for PurePursuitController class
      * @param driveCharacterization driveCharacterization of robot
@@ -22,6 +23,7 @@ public class PurePursuitController {
     public PurePursuitController(DriveCharacterization driveCharacterization, double lookAheadDistance) {
         this.driveCharacterization = driveCharacterization;
         this.lookAheadDistance = lookAheadDistance;
+        isFinished = false;
     }
     /**
      * This method is used to pursuit a path
@@ -34,7 +36,18 @@ public class PurePursuitController {
         Point lookAheadPoint = get_lookAhead_point(path, currPose,
                 (1 / closestPoint.curvature < this.lookAheadDistance) ? 1 / closestPoint.curvature
                         : this.lookAheadDistance);
+        if(Math.abs(currPose.dist(lookAheadPoint)) <= 1){
+            isFinished = true;
+            return new DriveCommand(0, 0);
+        }
         return pursuit_point(lookAheadPoint, currPose, closestPoint.velocity);
+    }
+    /**
+     * This method tells whether the robot has finished the path
+     * @return a boolean of whether the robot has finished the path
+     */
+    public boolean is_finished(){
+        return isFinished;
     }
     /**
      * This method is used to pursuit a point
