@@ -11,8 +11,6 @@ public abstract class Path {
 
     ArrayList<TrajPoint> points;
     ArrayList<WayPoint> waypoints;
-    double startHeading;
-    double endHeading;
 
     DriveCharacterization driveCharacterization;
 
@@ -22,8 +20,6 @@ public abstract class Path {
      * Constructor for Path class
      */
     public Path() {
-        this.startHeading = get_start_heading();
-        this.endHeading = get_end_heading();
         waypoints = get_waypoints();
         driveCharacterization = get_drive_characterization();
         calc_tan(waypoints);
@@ -38,8 +34,6 @@ public abstract class Path {
         for (int i = 1; i < waypoints.size() - 2; i++)
             waypoints.get(i).copy(0.5 * (waypoints.get(i + 1).x - waypoints.get(i - 1).x),
                     0.5 * (waypoints.get(i + 1).y - waypoints.get(i - 1).y));
-        waypoints.get(0).tanPoint.copy(Math.cos(this.startHeading), Math.sin(this.startHeading));
-        waypoints.get(waypoints.size() - 1).tanPoint.copy(Math.cos(this.endHeading), Math.sin(this.endHeading));
     }
     /**
      * This method is used to calculate the lookup velocites at each trajectory point
@@ -162,22 +156,12 @@ public abstract class Path {
         return true;
     }
     /**
-     * Override this method to input start heading(in radians)
-     * @return start heading of robot(in radians)
-     */
-    public abstract double get_start_heading();
-    /**
-     * Override this method to input end heading(in radians)
-     * @return end heading of robot(in radians)
-     */
-    public abstract double get_end_heading();
-    /**
      * Override this method to input the drive characterization
      * @return drive characterization of robot
      */       
     public abstract DriveCharacterization get_drive_characterization();
     /**
-     * Override this method to input the waypoints of your path
+     * Override this method to input the waypoints of your path (default headings of waypoints will be 0)
      * @return an Arraylist with the waypoints in your path
      */
     public abstract ArrayList<WayPoint> get_waypoints();
