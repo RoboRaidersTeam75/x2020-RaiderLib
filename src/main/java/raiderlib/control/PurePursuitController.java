@@ -112,9 +112,9 @@ public class PurePursuitController {
         ArrayList<TrajPoint> points = path.get_points(ID);
         TrajPoint output = points.get(0);
         for (TrajPoint p : points) {
-            if ((Math.pow(p.x - currPose.x, 2) + Math.pow(p.y - currPose.y, 2)) <= Math.pow(lookAheadDistance, 2) + 50
+            if ((Math.pow(p.x - currPose.x, 2) + Math.pow(p.y - currPose.y, 2)) <= Math.pow(lookAheadDistance, 2) + 5
                     && (Math.pow(p.x - currPose.x, 2) + Math.pow(p.y - currPose.y, 2)) >= Math.pow(lookAheadDistance, 2)
-                            - 50) {
+                            - 5) {
                 lookAheadPoint = ID;
                 output = p;
             }
@@ -157,8 +157,8 @@ public class PurePursuitController {
         for (int i = 1; i < points.size() - 1; i++) {
             if (points.get(i).curvature == 0)
                 points.get(i).velocity = driveCharacterization.maxVelocity;
-            else if (5 / points.get(i).curvature < driveCharacterization.maxVelocity)
-                points.get(i).velocity = 5 / points.get(i).curvature;
+            else if (driveCharacterization.maxVelocity / (points.get(i).curvature * 50) < driveCharacterization.maxVelocity)
+                points.get(i).velocity = driveCharacterization.maxVelocity / (points.get(i).curvature * 50);
             else
                 points.get(i).velocity = driveCharacterization.maxVelocity;
         }

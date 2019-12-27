@@ -2,6 +2,8 @@ package raiderlib.path;
 
 import java.util.ArrayList;
 
+import raiderlib.geometry.Point;
+
 /**
  * This abstract class is used as the base path that the robot follows To create
  * your own path, inherit this class and override the methods specified
@@ -27,9 +29,48 @@ public abstract class Path {
      * @param waypoints Arraylist of waypoints
      */
     void calc_tan(final ArrayList<WayPoint> waypoints) {
-        for (int i = 1; i < waypoints.size() - 2; i++)
-            waypoints.get(i).copy(0.5 * (waypoints.get(i + 1).x - waypoints.get(i - 1).x),
+        for (int i = 1; i < waypoints.size() - 1; i++)
+            waypoints.get(i).tanPoint.copy(0.5 * (waypoints.get(i + 1).x - waypoints.get(i - 1).x),
                     0.5 * (waypoints.get(i + 1).y - waypoints.get(i - 1).y));
+        findTan(waypoints.get(0), waypoints.get(1),
+                Math.atan2(waypoints.get(0).tanPoint.y, waypoints.get(0).tanPoint.x), true);
+        findTan(waypoints.get(waypoints.size() - 2), waypoints.get(waypoints.size() - 1), Math.atan2(
+                waypoints.get(waypoints.size() - 1).tanPoint.y, waypoints.get(waypoints.size() - 1).tanPoint.x), false);
+
+    }
+
+    void findTan(WayPoint w1, WayPoint w2, double heading, boolean start) {
+        double dist = 0;
+
+        if (heading == 90 || heading == -90)
+            dist = 2 * Math.abs(w1.y - w2.y);
+        else if (heading == 0)
+            dist = 2 * Math.abs(w1.x - w2.x);
+        else {
+            double m = Math.tan(heading * Math.PI / 180);
+            double im = - 1 / m;
+            if (start) {
+                double x = (m * w2.x - im * w1.x + w1.y - w2.y) / (m - im);
+                double y = m * (x - w2.x) + w2.y;
+                dist = 2 * w2.dist(new Point(x, y));
+            } else {
+                double x = (m * w1.x - im * w2.x + w2.y - w1.y) / (m - im);
+                double y = m * (x - w1.x) + w1.y;
+                dist = 2 * w1.dist(new Point(x, y));
+            }
+        }
+        if (start) {
+            double x = w2.x - dist * Math.cos(heading);
+            double y = w2.y - dist * Math.sin(heading);
+            w1.tanPoint.x = (w2.x - x) * 0.5;
+            w1.tanPoint.y = (w2.y - y) * 0.5;
+        } else {
+            double x = w1.x + dist * Math.cos(heading);
+            double y = w1.y + dist * Math.sin(heading);
+            w2.tanPoint.x = (x - w1.x) * 0.5;
+            w2.tanPoint.y = (y - w1.y) * 0.5;
+        }
+
     }
 
     /**
