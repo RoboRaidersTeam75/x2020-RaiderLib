@@ -24,8 +24,9 @@ Includes:
 To use as jitpack dependency, go to https://jitpack.io/#derekgeng15/RaiderLib
 
 Resources used:
+
   -https://www.cubic.org/docs/hermite.htm
-  
+
   -https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf
 
   -https://www.chiefdelphi.com/t/paper-implementation-of-the-adaptive-pure-pursuit-controller/166552
