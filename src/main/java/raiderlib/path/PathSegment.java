@@ -32,9 +32,9 @@ public class PathSegment {
      */
     ArrayList<TrajPoint> gen_points() {
         final ArrayList<TrajPoint> p = new ArrayList<>();
-        double d = get_divisor(1);
+        final double d = get_divisor(1);
         for (double t = 1; t <= d; t++) {
-            double i = t / d;
+            final double i = t / d;
             final double h1 = 2 * Math.pow(i, 3) - 3 * Math.pow(i, 2) + 1;
             final double h2 = -2 * Math.pow(i, 3) + 3 * Math.pow(i, 2);
             final double h3 = Math.pow(i, 3) - 2 * Math.pow(i, 2) + i;
@@ -48,8 +48,8 @@ public class PathSegment {
         return p;
     }
 
-    double get_divisor(double currDivisor) {
-        double i = 1 / currDivisor;
+    double get_divisor(final double currDivisor) {
+        final double i = 1 / currDivisor;
         final double h1 = 2 * Math.pow(i, 3) - 3 * Math.pow(i, 2) + 1;
         final double h2 = -2 * Math.pow(i, 3) + 3 * Math.pow(i, 2);
         final double h3 = Math.pow(i, 3) - 2 * Math.pow(i, 2) + i;

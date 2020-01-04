@@ -22,7 +22,13 @@ public abstract class Path {
         points = gen_points(waypoints);
         calc_curvature(points);
     }
-
+    
+    public Path(ArrayList<WayPoint> waypoints){
+        this.waypoints = waypoints;
+        calc_tan(this.waypoints);
+        points = gen_points(this.waypoints);
+        calc_curvature(points);
+    }
     /**
      * This method is used for calculating the tangent vectors for each waypoint
      * 
@@ -39,7 +45,7 @@ public abstract class Path {
 
     }
 
-    void findTan(WayPoint w1, WayPoint w2, double heading, boolean start) {
+    void findTan(final WayPoint w1, final WayPoint w2, final double heading, final boolean start) {
         double dist = 0;
 
         if (heading == 90 || heading == -90)
@@ -47,26 +53,26 @@ public abstract class Path {
         else if (heading == 0)
             dist = 2 * Math.abs(w1.x - w2.x);
         else {
-            double m = Math.tan(heading * Math.PI / 180);
-            double im = - 1 / m;
+            final double m = Math.tan(heading * Math.PI / 180);
+            final double im = -1 / m;
             if (start) {
-                double x = (m * w2.x - im * w1.x + w1.y - w2.y) / (m - im);
-                double y = m * (x - w2.x) + w2.y;
+                final double x = (m * w2.x - im * w1.x + w1.y - w2.y) / (m - im);
+                final double y = m * (x - w2.x) + w2.y;
                 dist = 2 * w2.dist(new Point(x, y));
             } else {
-                double x = (m * w1.x - im * w2.x + w2.y - w1.y) / (m - im);
-                double y = m * (x - w1.x) + w1.y;
+                final double x = (m * w1.x - im * w2.x + w2.y - w1.y) / (m - im);
+                final double y = m * (x - w1.x) + w1.y;
                 dist = 2 * w1.dist(new Point(x, y));
             }
         }
         if (start) {
-            double x = w2.x - dist * Math.cos(heading);
-            double y = w2.y - dist * Math.sin(heading);
+            final double x = w2.x - dist * Math.cos(heading);
+            final double y = w2.y - dist * Math.sin(heading);
             w1.tanPoint.x = (w2.x - x) * 0.5;
             w1.tanPoint.y = (w2.y - y) * 0.5;
         } else {
-            double x = w1.x + dist * Math.cos(heading);
-            double y = w1.y + dist * Math.sin(heading);
+            final double x = w1.x + dist * Math.cos(heading);
+            final double y = w1.y + dist * Math.sin(heading);
             w2.tanPoint.x = (x - w1.x) * 0.5;
             w2.tanPoint.y = (y - w1.y) * 0.5;
         }
@@ -78,7 +84,7 @@ public abstract class Path {
      * 
      * @param points Arraylist of points to calculate curvatures for
      */
-    void calc_curvature(ArrayList<TrajPoint> points) {
+    void calc_curvature(final ArrayList<TrajPoint> points) {
         double E, D, F, h, k, r;
         for (int i = 1; i < points.size() - 1; i++) {
             E = ((points.get(i - 1).x - points.get(i).x)
@@ -107,11 +113,11 @@ public abstract class Path {
     /**
      * @return ArrayList of generated points from waypoints
      */
-    ArrayList<TrajPoint> gen_points(ArrayList<WayPoint> waypoints) {
-        ArrayList<TrajPoint> p = new ArrayList<TrajPoint>();
+    ArrayList<TrajPoint> gen_points(final ArrayList<WayPoint> waypoints) {
+        final ArrayList<TrajPoint> p = new ArrayList<TrajPoint>();
         p.add(new TrajPoint(waypoints.get(0).x, waypoints.get(0).y));
         for (int i = 1; i < waypoints.size(); i++) {
-            PathSegment s = new PathSegment(waypoints.get(i - 1), waypoints.get(i));
+            final PathSegment s = new PathSegment(waypoints.get(i - 1), waypoints.get(i));
             p.addAll(s.get_points());
         }
         return p;
@@ -132,7 +138,7 @@ public abstract class Path {
      * @param i starting index of sublist
      * @return trajectory points from the given index that form the path
      */
-    public ArrayList<TrajPoint> get_points(int i) {
+    public ArrayList<TrajPoint> get_points(final int i) {
         return new ArrayList<TrajPoint>(this.points.subList(i, points.size() - 1));
     }
 

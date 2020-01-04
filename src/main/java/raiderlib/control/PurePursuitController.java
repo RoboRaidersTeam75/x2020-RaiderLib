@@ -25,7 +25,8 @@ public class PurePursuitController {
      * @param driveCharacterization driveCharacterization of robot
      * @param lookAheadDistance     max lookahead distance
      */
-    public PurePursuitController(Path path, DriveCharacterization driveCharacterization, double lookAheadDistance) {
+    public PurePursuitController(final Path path, final DriveCharacterization driveCharacterization,
+            final double lookAheadDistance) {
         this.driveCharacterization = driveCharacterization;
         this.lookAheadDistance = lookAheadDistance;
         this.path = path;
@@ -33,7 +34,7 @@ public class PurePursuitController {
         isFinished = false;
     }
 
-    public PurePursuitController(DriveCharacterization driveCharacterization, double lookAheadDistance) {
+    public PurePursuitController(final DriveCharacterization driveCharacterization, final double lookAheadDistance) {
         this.driveCharacterization = driveCharacterization;
         this.lookAheadDistance = lookAheadDistance;
         isFinished = false;
@@ -46,9 +47,9 @@ public class PurePursuitController {
      * @param currPose robot's current pose
      * @return a DriveCommand for the robot to follow
      */
-    public DriveCommand pursuit_path(Pose currPose) {
-        TrajPoint closestPoint = get_closest_point(path, currPose);
-        Point lookAheadPoint = get_lookAhead_point(path, currPose,
+    public DriveCommand pursuit_path(final Pose currPose) {
+        final TrajPoint closestPoint = get_closest_point(path, currPose);
+        final Point lookAheadPoint = get_lookAhead_point(path, currPose,
                 (1 / closestPoint.curvature < this.lookAheadDistance) ? 1 / closestPoint.curvature
                         : this.lookAheadDistance);
         if (Math.abs(currPose.dist(lookAheadPoint)) <= 1) {
@@ -75,12 +76,19 @@ public class PurePursuitController {
      * @param velocity velocity to pursuit at
      * @return a DriveCommand for the robot to follow
      */
-    public DriveCommand pursuit_point(Point p, Pose currPose, double velocity) {
-        double arcCurve = get_arc_curvature(p, currPose);
+    public DriveCommand pursuit_point(final Point p, final Pose currPose, final double velocity) {
+        final double arcCurve = get_arc_curvature(p, currPose);
         return new DriveCommand(velocity * (2 + arcCurve * this.driveCharacterization.trackWidth),
                 velocity * (2 - arcCurve * this.driveCharacterization.trackWidth));
     }
-
+    /**
+     * This method resets the lookahead IDs and lookup velocites
+     */
+    public void reset(){
+        lookAheadPoint = 0;
+        closestPoint = 0;
+        isFinished = false;
+    }
     /**
      * This method is used to calculate the curvature of the arc to a lookahead
      * point
@@ -89,11 +97,11 @@ public class PurePursuitController {
      * @param currPose       robot's current pose
      * @return the curvature of the arc
      */
-    double get_arc_curvature(Point lookAheadPoint, Pose currPose) {
-        double a = -Math.tan(currPose.theta);
-        double c = Math.tan(currPose.theta) * currPose.x - currPose.y;
-        double x = Math.abs(a * lookAheadPoint.x + lookAheadPoint.y + c) / Math.sqrt(a * a + 1);
-        int sign = ((Math.sin(currPose.theta) * (lookAheadPoint.x - currPose.x)
+    double get_arc_curvature(final Point lookAheadPoint, final Pose currPose) {
+        final double a = -Math.tan(currPose.theta);
+        final double c = Math.tan(currPose.theta) * currPose.x - currPose.y;
+        final double x = Math.abs(a * lookAheadPoint.x + lookAheadPoint.y + c) / Math.sqrt(a * a + 1);
+        final int sign = ((Math.sin(currPose.theta) * (lookAheadPoint.x - currPose.x)
                 - Math.cos(currPose.theta) * (lookAheadPoint.y - currPose.y)) > 0) ? 1 : -1;
         return sign * 2 * x / (Math.pow(currPose.dist(lookAheadPoint), 2));
     }
@@ -107,11 +115,11 @@ public class PurePursuitController {
      * @return the point on the path within the lookahead radius. If there is more
      *         than one, the robot chooses the later one on the path
      */
-    TrajPoint get_lookAhead_point(Path path, Pose currPose, double lookAheadDistance) {
+    TrajPoint get_lookAhead_point(final Path path, final Pose currPose, final double lookAheadDistance) {
         int ID = lookAheadPoint;
-        ArrayList<TrajPoint> points = path.get_points(ID);
+        final ArrayList<TrajPoint> points = path.get_points(ID);
         TrajPoint output = points.get(0);
-        for (TrajPoint p : points) {
+        for (final TrajPoint p : points) {
             if ((Math.pow(p.x - currPose.x, 2) + Math.pow(p.y - currPose.y, 2)) <= Math.pow(lookAheadDistance, 2) + 5
                     && (Math.pow(p.x - currPose.x, 2) + Math.pow(p.y - currPose.y, 2)) >= Math.pow(lookAheadDistance, 2)
                             - 5) {
@@ -130,12 +138,12 @@ public class PurePursuitController {
      * @param currPose robot's current pose
      * @return the point on the path which is closest to the robot
      */
-    TrajPoint get_closest_point(Path path, Pose currPose) {
+    TrajPoint get_closest_point(final Path path, final Pose currPose) {
         int ID = closestPoint;
-        ArrayList<TrajPoint> points = path.get_points(ID);
+        final ArrayList<TrajPoint> points = path.get_points(ID);
         TrajPoint output = points.get(0);
         double dist = currPose.dist(output);
-        for (TrajPoint p : points) {
+        for (final TrajPoint p : points) {
             if (currPose.dist(p) < dist) {
                 closestPoint = ID;
                 dist = currPose.dist(p);
@@ -153,7 +161,7 @@ public class PurePursuitController {
      * @param driveCharacterization characterization of the drivetrain
      * @param points                arraylist of points to set velocites for
      */
-    void calc_velocity(DriveCharacterization driveCharacterization, ArrayList<TrajPoint> points) {
+    void calc_velocity(final DriveCharacterization driveCharacterization, final ArrayList<TrajPoint> points) {
         for (int i = 1; i < points.size() - 1; i++) {
             if (points.get(i).curvature == 0)
                 points.get(i).velocity = driveCharacterization.maxVelocity;
